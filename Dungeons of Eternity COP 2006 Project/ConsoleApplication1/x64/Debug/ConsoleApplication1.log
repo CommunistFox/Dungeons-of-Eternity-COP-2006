@@ -1,0 +1,4 @@
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (ConsoleApplication1.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  ConsoleApplication1.cpp
+C:\OneDrive\Desktop\Dungeons of Eternity COP 2006 Project\ConsoleApplication1\ConsoleApplication1.cpp(280,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  ConsoleApplication1.vcxproj -> C:\OneDrive\Desktop\Dungeons of Eternity COP 2006 Project\ConsoleApplication1\x64\Debug\Dungeons of Eternity.exe
