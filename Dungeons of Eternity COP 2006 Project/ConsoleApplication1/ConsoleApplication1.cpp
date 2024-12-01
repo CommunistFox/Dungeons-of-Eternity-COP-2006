@@ -75,6 +75,8 @@ public:
     int monsterAgility=0;
     int monsterRoll=0;
     int monsterChoice=0;
+    int xpValue;
+    string monsterName;
 
     void createMonster()
     {
@@ -103,12 +105,113 @@ public:
         
             
         }
+        xpValue = rand() % 10*difficulty + ((difficulty * 5) + 1);
+        if (difficulty == 1)
+        {
+            string line;
+            ifstream names("LowLevelMonsters.txt");
+            int targetLine = rand() % 10 + 1;
+            int currentLine = 1;
+            if (names.is_open())
+            {
+                while (getline(names, line)&&currentLine<11)
+                {
+                    if (currentLine == targetLine)
+                    {
+                        monsterName = line;
+                    }
+                    currentLine++;
+                }
+
+            }
+        }
+        else if (difficulty == 2)
+        {
+            string line;
+            ifstream names("MidLevelMonsters.txt");
+            int targetLine = rand() % 10 + 1;
+            int currentLine = 1;
+            if (names.is_open())
+            {
+                while (getline(names, line) && currentLine < 11)
+                {
+                    if (currentLine == targetLine)
+                    {
+                        monsterName = line;
+                    }
+                    currentLine++;
+                }
+
+            }
+        }
+        else if (difficulty == 3)
+        {
+            string line;
+            ifstream names("HighLevelMonsters.txt");
+            int targetLine = rand() % 10 + 1;
+            int currentLine = 1;
+            if (names.is_open())
+            {
+                while (getline(names, line) && currentLine < 11)
+                {
+                    if (currentLine == targetLine)
+                    {
+                        monsterName = line;
+                    }
+                    currentLine++;
+                }
+
+            }
+        }
+        else if (difficulty == 5)
+        {
+            string line;
+            ifstream names("Bosses.txt");
+            int targetLine = rand() % 5 + 1;
+            int currentLine = 1;
+            if (names.is_open())
+            {
+                while (getline(names, line) && currentLine < 6)
+                {
+                    if (currentLine == targetLine)
+                    {
+                        monsterName = line;
+                    }
+                    currentLine++;
+                }
+
+            }
+        }
+
+
+
+
+
     }
 
 
     Monster(int difficulty): difficulty(difficulty){}
 
     Monster():difficulty(9){}
+};
+
+class Hero
+{
+public:
+    int heroHealth;
+    int heroVitality = 10;
+    int heroStrength = 10;
+    int heroAgility = 10;
+    int lvl = 1;
+    int xp = 0;
+    int skillPoints = 5;
+
+    
+    void applyStats()
+    {
+        heroHealth = 20 + (heroVitality - 10); // Player's health based on vitality
+    }
+
 };
 
 
@@ -128,20 +231,16 @@ int rollDice(int sides) {
 }
 
 
-void combatTutorial(int strength, int agility, int vitality) {
-    int playerHealth = 20 + (vitality - 10); // Player's health based on vitality
-    int ratHealth = 10;                     // Rat's health
-    int ratStrength = 11;                   // Rat's strength
-    int ratAgility = 13;                    // Rat's agility
+void combat(int playerHealth, int strength, int agility, int monsterHealth, int monsterStrength, int monsterAgility, string monsterName, bool &gameOver) {
     bool heavyAttackUsed = false;           // Track if heavy attack was just used
     int playerRoll = 0;                     // Declare playerRoll outside of the switch-case
 
     cout << "\n=== Combat Tutorial: You vs. Rat ===\n";
     cout << "Player Health: " << playerHealth << endl;
-    cout << "Rat Health: " << ratHealth << endl;
+    cout << monsterName <<" Health: " << monsterHealth << endl;
 
     // Combat loop
-    while (playerHealth > 0 && ratHealth > 0) {
+    while (playerHealth > 0 && monsterHealth > 0) {
         if (!heavyAttackUsed) { // Allow player action if heavy attack was not just used
             cout << "\nYour turn! Choose an action:\n";
             cout << "1. Attack\n2. Dodge\n3. Heavy Attack\n";
@@ -154,13 +253,13 @@ void combatTutorial(int strength, int agility, int vitality) {
             case 1: // Regular attack
                 playerRoll = rollDice(20) + (strength - 10) / 2;
                 cout << "You rolled: " << playerRoll << " (attack roll)\n";
-                if (playerRoll >= rollDice(20) + (ratAgility - 10) / 2) {
+                if (playerRoll >= rollDice(20) + (monsterAgility - 10) / 2) {
                     playerDamage = rollDice(6) + (strength - 10) / 2;
-                    ratHealth -= playerDamage;
-                    cout << "You hit the rat for " << playerDamage << " damage!\n";
+                    monsterHealth -= playerDamage;
+                    cout << "You hit the "<< monsterName <<" for " << playerDamage << " damage!\n";
                 }
                 else {
-                    cout << "You missed the rat!\n";
+                    cout << "You missed the "<< monsterName << "!\n";
                 }
                 break;
 
@@ -172,13 +271,13 @@ void combatTutorial(int strength, int agility, int vitality) {
             case 3: // Heavy attack
                 playerRoll = rollDice(20) + ((strength - 10) / 2) * 2 + 1; // Double modifier or +1
                 cout << "You rolled: " << playerRoll << " (heavy attack roll)\n";
-                if (playerRoll >= rollDice(20) + (ratAgility - 10) / 2) {
+                if (playerRoll >= rollDice(20) + (monsterAgility - 10) / 2) {
                     playerDamage = rollDice(6) + ((strength - 10) / 2) * 2 + 1;
-                    ratHealth -= playerDamage;
-                    cout << "You hit the rat with a heavy blow for " << playerDamage << " damage!\n";
+                    monsterHealth -= playerDamage;
+                    cout << "You hit the " << monsterName << " with a heavy blow for " << playerDamage << " damage!\n";
                 }
                 else {
-                    cout << "You missed the rat with your heavy attack!\n";
+                    cout << "You missed the " << monsterName << " with your heavy attack!\n";
                 }
                 heavyAttackUsed = true; // Set flag to skip next player turn
                 break;
@@ -193,47 +292,48 @@ void combatTutorial(int strength, int agility, int vitality) {
             heavyAttackUsed = false; // Reset heavy attack flag
         }
 
-        if (ratHealth <= 0) {
-            cout << "\nThe rat has been defeated! You emerge victorious!\n";
+        if (monsterHealth <= 0) {
+            cout << "\nThe " << monsterName << " has been defeated! You emerge victorious!\n";
             break;
         }
 
         // Rat's turn
         for (int i = 0; i < (heavyAttackUsed ? 2 : 1); i++) { // Rat gets 2 turns if heavy attack used
-            cout << "\nThe rat's turn!\n";
-            int ratChoice = rollDice(2); // 1 for attack, 2 for heavy attack
-            int ratRoll = rollDice(20) + (ratStrength - 10) / 2;
+            cout << "\nThe " << monsterName << "'s turn!\n";
+            int monsterChoice = rollDice(2); // 1 for attack, 2 for heavy attack
+            int monsterRoll = rollDice(20) + (monsterStrength - 10) / 2;
 
-            if (ratChoice == 1) { // Regular attack
-                cout << "The rat rolls " << ratRoll << " for its attack.\n";
-                if (playerRoll >= ratRoll) { // Player dodges
-                    cout << "You dodged the rat's attack!\n";
+            if (monsterChoice == 1) { // Regular attack
+                cout << "The " << monsterName << " rolls " << monsterRoll << " for its attack.\n";
+                if (playerRoll >= monsterRoll) { // Player dodges
+                    cout << "You dodged the " << monsterName << "'s attack!\n";
                 }
                 else {
-                    int ratDamage = rollDice(6) + (ratStrength - 10) / 2;
-                    playerHealth -= ratDamage;
-                    cout << "The rat hits you for " << ratDamage << " damage!\n";
+                    int monsterDamage = rollDice(6) + (monsterStrength - 10) / 2;
+                    playerHealth -= monsterDamage;
+                    cout << "The " << monsterName << " hits you for " << monsterDamage << " damage!\n";
                 }
             }
             else { // Heavy attack
-                cout << "The rat charges up for a heavy attack!\n";
-                ratRoll += (ratStrength - 10) / 2; // Double modifier or +1
-                cout << "The rat rolls " << ratRoll << " for its heavy attack.\n";
-                if (playerRoll >= ratRoll) { // Player dodges
-                    cout << "You dodged the rat's heavy attack!\n";
+                cout << "The " << monsterName << " charges up for a heavy attack!\n";
+                monsterRoll += (monsterStrength - 10) / 2; // Double modifier or +1
+                cout << "The " << monsterName << " rolls " << monsterRoll << " for its heavy attack.\n";
+                if (playerRoll >= monsterRoll) { // Player dodges
+                    cout << "You dodged the " << monsterName << "'s heavy attack!\n";
                 }
                 else {
-                    int ratDamage = rollDice(6) + ((ratStrength - 10) / 2) * 2;
-                    playerHealth -= ratDamage;
-                    cout << "The rat lands a heavy blow for " << ratDamage << " damage!\n";
+                    int monsterDamage = rollDice(6) + ((monsterStrength - 10) / 2) * 2;
+                    playerHealth -= monsterDamage;
+                    cout << "The " << monsterName << " lands a heavy blow for " << monsterDamage << " damage!\n";
                 }
             }
 
             cout << "\nPlayer Health: " << playerHealth << endl;
-            cout << "Rat Health: " << ratHealth << endl;
+            cout << monsterName << " Health: " << monsterHealth << endl;
 
             if (playerHealth <= 0) {
                 cout << "\nYou have been defeated. The dungeon claims another victim...\n";
+                gameOver = true;
                 break;
             }
         }
@@ -271,10 +371,6 @@ void generateMenu(int health, int level, int money)
 
 
 
-
-
-
-
 int main()
 {
     srand(time(0));
@@ -282,8 +378,7 @@ int main()
 
     Monster allMonsters[10][7];
 
-    titleScreen();
-
+    Hero player;
 
     for (int x = 0; x < 10; x++)
     {
@@ -295,17 +390,150 @@ int main()
         }
     }
 
-    
+    bool gameOver = false;
+
+    titleScreen();
 
 
 
 
-    cout << allMonsters[0][1].monsterAgility;
+
+
+
+    player.applyStats();
+    ///combat(player.heroHealth, player.heroStrength, player.heroAgility, allMonsters[0][1].monsterHealth, allMonsters[0][1].monsterStrength, allMonsters[0][1].monsterAgility, allMonsters[0][1].monsterName);
+
+    int xPosition = 9;
+    int yPosition = 2;
+    bool leftSide;
+    bool rightSide;
+    bool forwardSide;
+    bool backwardSide;
+    int choice;
+
+    while (!gameOver&&allRooms[0][1].roomDifficulty == 5)
+    {
+
+        if (allRooms[xPosition][yPosition - 1].roomDifficulty == 9 && (yPosition - 1) > -1)
+        {
+            leftSide = false;
+        }
+        else if (allRooms[xPosition][yPosition - 1].roomDifficulty != 9 && (yPosition - 1) > -1)
+        {
+            leftSide = true;
+        }
+        else
+        {
+            leftSide = false;
+        }
+        if (allRooms[xPosition][yPosition + 1].roomDifficulty == 9 && (yPosition + 1) < 7)
+        {
+            rightSide = false;
+        }
+        else if (allRooms[xPosition][yPosition + 1].roomDifficulty != 9 && (yPosition + 1) < 7)
+        {
+            rightSide = true;
+        }
+        else
+        {
+            rightSide = false;
+        }
+        if (allRooms[xPosition - 1][yPosition].roomDifficulty == 9 && (xPosition - 1) > -1)
+        {
+            forwardSide = false;
+        }
+        else if (allRooms[xPosition - 1][yPosition].roomDifficulty != 9 && (xPosition - 1) > -1)
+        {
+            forwardSide = true;
+        }
+        else
+        {
+            forwardSide = false;
+        }
+        if (allRooms[xPosition + 1][yPosition].roomDifficulty == 9 && (xPosition + 1) < 10)
+        {
+            backwardSide = false;
+        }
+        else if (allRooms[xPosition + 1][yPosition].roomDifficulty != 9 && (xPosition + 1) < 10)
+        {
+            backwardSide = true;
+        }
+        else
+        {
+            backwardSide = false;
+        }
+
+        while (true)
+        {
+
+
+            cout << "Please choose direction you want to go:" << endl;
+
+            if (leftSide)
+            {
+                cout << "1. Left" << endl;
+            }
+            if (rightSide)
+            {
+                cout << "2. Right" << endl;
+            }
+            if (forwardSide)
+            {
+                cout << "3. Forward" << endl;
+            }
+            if (backwardSide)
+            {
+                cout << "4. Backward" << endl;
+            }
+
+            cin >> choice;
+
+            if (choice == 1 && leftSide)
+            {
+                yPosition -= 1;
+                break;
+            }
+            else if (choice == 2 && rightSide)
+            {
+                yPosition += 1;
+                break;
+            }
+            else if (choice == 3 && forwardSide)
+            {
+                xPosition -= 1;
+                break;
+            }
+            else if (choice == 4 && backwardSide)
+            {
+                xPosition += 1;
+                break;
+            }
+            else
+            {
+                cout << "Wrong Choice";
+            }
+
+
+        }
+
+
+
+
+        if (allRooms[xPosition][yPosition].roomDifficulty != 9&& allRooms[xPosition][yPosition].roomDifficulty != 0)
+        {
+            combat(player.heroHealth, player.heroStrength, player.heroAgility, allMonsters[xPosition][yPosition].monsterHealth, allMonsters[xPosition][yPosition].monsterStrength, allMonsters[xPosition][yPosition].monsterAgility, allMonsters[xPosition][yPosition].monsterName, gameOver);
+            if (!gameOver)
+            {
+                allRooms[xPosition][yPosition].roomDifficulty = 0;
+            }
+        }
+        
+    }  
+
+
+
+
     
-    
-    cout << allRooms[0][1].roomDifficulty;
-    
-    cout << allRooms[0][1].roomDescription;
 
 
     
@@ -327,15 +555,8 @@ To Do List:
 
 - 8 more dungeon templates + random picking of template
 - Text for each room and its description (example: Text1: The room is dark and something etc. Text2: There is a pathway forward, left , or right, or back.)
-- Determine health of main character
-- Make classes for monsters
 - Determine balancing for monsters
-- Create a Boss, who should also be randomly picked
 - Items and their effects
-- Main character attributes (Strength, Perception, Vitality, Agility)
-- Text for fights
-- Fight sequence
-- Figure out how to take input
 - Organize code, so it doesn't cause brain tumour
 - Comments should be placed in important parts of the code
 - To be determined: Shopes and the items + currency
@@ -346,14 +567,6 @@ To Do List:
 - Level up system(concept: level up every three rooms each level up you can increase two stats by 2)
 - To be determined: Secret rooms with random things
 
-
-In progress: (Task + Name of who does it)
-- Assign attriutes to each room when dungeon generates (Tim)
--Text for each room and its description (cole)
--Main character attributes (cole)
-- Math that goes along with attributes(cole)
-- Items and their effects(cole)
-Finished: (Task + Name of who finished it)
 
 
 
