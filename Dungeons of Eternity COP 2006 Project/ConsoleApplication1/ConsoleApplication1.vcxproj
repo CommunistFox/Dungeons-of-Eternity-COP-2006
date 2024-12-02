@@ -130,6 +130,13 @@
   <ItemGroup>
     <ClCompile Include="ConsoleApplication1.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="Bosses.txt" />
+    <Text Include="DungeonDescriptions.txt" />
+    <Text Include="HighLevelMonsters.txt" />
+    <Text Include="LowLevelMonsters.txt" />
+    <Text Include="MidLevelMonsters.txt" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

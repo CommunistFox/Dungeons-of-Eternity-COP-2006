@@ -19,4 +19,11 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Text Include="DungeonDescriptions.txt" />
+    <Text Include="MidLevelMonsters.txt" />
+    <Text Include="LowLevelMonsters.txt" />
+    <Text Include="HighLevelMonsters.txt" />
+    <Text Include="Bosses.txt" />
+  </ItemGroup>
 </Project>

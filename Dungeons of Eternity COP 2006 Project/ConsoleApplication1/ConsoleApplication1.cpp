@@ -4,6 +4,7 @@
 #include <fstream>
 #include <cstdlib>
 #include <ctime>
+#include <thread>
 using namespace std;
 
 int titleScreen() {
@@ -233,9 +234,12 @@ int rollDice(int sides) {
 
 void combat(int playerHealth, int strength, int agility, int monsterHealth, int monsterStrength, int monsterAgility, string monsterName, bool &gameOver) {
     bool heavyAttackUsed = false;           // Track if heavy attack was just used
+    bool monsterHeavyAttackUsed = false;
     int playerRoll = 0;                     // Declare playerRoll outside of the switch-case
 
-    cout << "\n=== Combat Tutorial: You vs. Rat ===\n";
+    cout << "You have encountered a " << monsterName;
+    this_thread::sleep_for(chrono::seconds(2));
+    system("cls");
     cout << "Player Health: " << playerHealth << endl;
     cout << monsterName <<" Health: " << monsterHealth << endl;
 
@@ -252,58 +256,76 @@ void combat(int playerHealth, int strength, int agility, int monsterHealth, int 
             switch (choice) {
             case 1: // Regular attack
                 playerRoll = rollDice(20) + (strength - 10) / 2;
+                system("cls");
                 cout << "You rolled: " << playerRoll << " (attack roll)\n";
                 if (playerRoll >= rollDice(20) + (monsterAgility - 10) / 2) {
                     playerDamage = rollDice(6) + (strength - 10) / 2;
                     monsterHealth -= playerDamage;
                     cout << "You hit the "<< monsterName <<" for " << playerDamage << " damage!\n";
+                    this_thread::sleep_for(chrono::seconds(2));
                 }
                 else {
                     cout << "You missed the "<< monsterName << "!\n";
+                    this_thread::sleep_for(chrono::seconds(2));
                 }
                 break;
 
             case 2: // Dodge
                 playerRoll = rollDice(20) + (agility - 10) / 2;
+                system("cls");
                 cout << "You prepare to dodge with a roll of " << playerRoll << ".\n";
+                this_thread::sleep_for(chrono::seconds(2));
                 break;
 
             case 3: // Heavy attack
                 playerRoll = rollDice(20) + ((strength - 10) / 2) * 2 + 1; // Double modifier or +1
+                system("cls");
                 cout << "You rolled: " << playerRoll << " (heavy attack roll)\n";
                 if (playerRoll >= rollDice(20) + (monsterAgility - 10) / 2) {
                     playerDamage = rollDice(6) + ((strength - 10) / 2) * 2 + 1;
                     monsterHealth -= playerDamage;
                     cout << "You hit the " << monsterName << " with a heavy blow for " << playerDamage << " damage!\n";
+                    this_thread::sleep_for(chrono::seconds(2));
                 }
                 else {
+                    system("cls");
                     cout << "You missed the " << monsterName << " with your heavy attack!\n";
+                    this_thread::sleep_for(chrono::seconds(2));
                 }
                 heavyAttackUsed = true; // Set flag to skip next player turn
                 break;
 
             default:
+                system("cls");
                 cout << "Invalid choice. Turn skipped.\n";
+                this_thread::sleep_for(chrono::seconds(2));
                 break;
             }
         }
         else {
             cout << "You are recovering from your heavy attack and skip this turn.\n";
+            this_thread::sleep_for(chrono::seconds(2));
             heavyAttackUsed = false; // Reset heavy attack flag
         }
 
         if (monsterHealth <= 0) {
-            cout << "\nThe " << monsterName << " has been defeated! You emerge victorious!\n";
+            system("cls");
+            cout << "The " << monsterName << " has been defeated! You emerge victorious!\n";
+            this_thread::sleep_for(chrono::seconds(2));
+            system("cls");
             break;
         }
 
         // Rat's turn
-        for (int i = 0; i < (heavyAttackUsed ? 2 : 1); i++) { // Rat gets 2 turns if heavy attack used
-            cout << "\nThe " << monsterName << "'s turn!\n";
+        ///for (int i = 0; i < (heavyAttackUsed ? 2 : 1); i++) { // Rat gets 2 turns if heavy attack used
+            system("cls");
+            cout << "The " << monsterName << "'s turn!\n";
+            this_thread::sleep_for(chrono::seconds(1));
+            system("cls");
             int monsterChoice = rollDice(2); // 1 for attack, 2 for heavy attack
             int monsterRoll = rollDice(20) + (monsterStrength - 10) / 2;
 
-            if (monsterChoice == 1) { // Regular attack
+            if (monsterChoice == 1 && !monsterHeavyAttackUsed) { // Regular attack
                 cout << "The " << monsterName << " rolls " << monsterRoll << " for its attack.\n";
                 if (playerRoll >= monsterRoll) { // Player dodges
                     cout << "You dodged the " << monsterName << "'s attack!\n";
@@ -315,28 +337,42 @@ void combat(int playerHealth, int strength, int agility, int monsterHealth, int 
                 }
             }
             else { // Heavy attack
-                cout << "The " << monsterName << " charges up for a heavy attack!\n";
-                monsterRoll += (monsterStrength - 10) / 2; // Double modifier or +1
-                cout << "The " << monsterName << " rolls " << monsterRoll << " for its heavy attack.\n";
-                if (playerRoll >= monsterRoll) { // Player dodges
-                    cout << "You dodged the " << monsterName << "'s heavy attack!\n";
+                if (!monsterHeavyAttackUsed)
+                {
+                    cout << "The " << monsterName << " charges up for a heavy attack!\n";
+                    monsterRoll += (monsterStrength - 10) / 2; // Double modifier or +1
+                    cout << "The " << monsterName << " rolls " << monsterRoll << " for its heavy attack.\n";
+                    if (playerRoll >= monsterRoll) { // Player dodges
+                        cout << "You dodged the " << monsterName << "'s heavy attack!\n";
+                    }
+                    else {
+                        int monsterDamage = rollDice(6) + ((monsterStrength - 10) / 2) * 2;
+                        playerHealth -= monsterDamage;
+                        cout << "The " << monsterName << " lands a heavy blow for " << monsterDamage << " damage!\n";
+                    }
+                    monsterHeavyAttackUsed = true;
                 }
-                else {
-                    int monsterDamage = rollDice(6) + ((monsterStrength - 10) / 2) * 2;
-                    playerHealth -= monsterDamage;
-                    cout << "The " << monsterName << " lands a heavy blow for " << monsterDamage << " damage!\n";
+                else
+                {
+                    cout << monsterName << " skips this turn";
+                    monsterHeavyAttackUsed = false;
                 }
             }
 
-            cout << "\nPlayer Health: " << playerHealth << endl;
+            this_thread::sleep_for(chrono::seconds(3));
+            system("cls");
+
+            cout << "Player Health: " << playerHealth << endl;
             cout << monsterName << " Health: " << monsterHealth << endl;
 
             if (playerHealth <= 0) {
-                cout << "\nYou have been defeated. The dungeon claims another victim...\n";
+                system("cls");
+                cout << "You have been defeated. The dungeon claims another victim...\n";
+                this_thread::sleep_for(chrono::seconds(5));
                 gameOver = true;
                 break;
             }
-        }
+        ///}
     }
 }
 
@@ -367,6 +403,12 @@ void generateMenu(int health, int level, int money)
 }
 
 
+int getChoice()
+{
+    int choice;
+    cin >> choice;
+    return choice;
+}
 
 
 
@@ -401,10 +443,18 @@ int main()
 
 
     player.applyStats();
-    ///combat(player.heroHealth, player.heroStrength, player.heroAgility, allMonsters[0][1].monsterHealth, allMonsters[0][1].monsterStrength, allMonsters[0][1].monsterAgility, allMonsters[0][1].monsterName);
+ 
 
-    int xPosition = 9;
-    int yPosition = 2;
+
+/// normal settings
+   /// int xPosition = 9;
+   /// int yPosition = 2;
+
+
+///Boss for test
+    int xPosition = 1;
+    int yPosition = 1;
+
     bool leftSide;
     bool rightSide;
     bool forwardSide;
@@ -486,7 +536,8 @@ int main()
                 cout << "4. Backward" << endl;
             }
 
-            cin >> choice;
+            choice = getChoice();
+            
 
             if (choice == 1 && leftSide)
             {
@@ -510,7 +561,8 @@ int main()
             }
             else
             {
-                cout << "Wrong Choice";
+                system("cls");
+                cout << "Wrong Choice" << endl;
             }
 
 
@@ -521,6 +573,7 @@ int main()
 
         if (allRooms[xPosition][yPosition].roomDifficulty != 9&& allRooms[xPosition][yPosition].roomDifficulty != 0)
         {
+            system("cls");
             combat(player.heroHealth, player.heroStrength, player.heroAgility, allMonsters[xPosition][yPosition].monsterHealth, allMonsters[xPosition][yPosition].monsterStrength, allMonsters[xPosition][yPosition].monsterAgility, allMonsters[xPosition][yPosition].monsterName, gameOver);
             if (!gameOver)
             {
