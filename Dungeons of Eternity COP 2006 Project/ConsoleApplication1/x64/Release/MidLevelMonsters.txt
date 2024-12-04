@@ -1,0 +1,10 @@
+Wolf
+Rock Golem
+Serpent
+Bandit
+Imp
+Small Fire Elemental
+Small Water Elemental
+Small Earth Elemental
+Small Wind Elemental
+Assasin
