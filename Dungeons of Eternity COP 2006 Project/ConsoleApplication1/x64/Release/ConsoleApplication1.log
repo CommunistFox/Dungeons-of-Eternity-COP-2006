@@ -1,8 +1,0 @@
-﻿  ConsoleApplication1.cpp
-C:\OneDrive\Desktop\Dungeons of Eternity COP 2006 Project\ConsoleApplication1\ConsoleApplication1.cpp(247,31): warning C4244: '-=': conversion from 'double' to 'int', possible loss of data
-C:\OneDrive\Desktop\Dungeons of Eternity COP 2006 Project\ConsoleApplication1\ConsoleApplication1.cpp(483,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Generating code
-  Previous IPDB not found, fall back to full compilation.
-  All 241 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
-  Finished generating code
-  ConsoleApplication1.vcxproj -> C:\OneDrive\Desktop\Dungeons of Eternity COP 2006 Project\ConsoleApplication1\x64\Release\Dungeons of Eternity.exe
