@@ -584,7 +584,7 @@ int main()
 
         while (true)
         {
-
+            cout << allRooms[xPosition][yPosition].roomDescription << endl << endl;
 
             cout << "Please choose direction you want to go:" << endl;
 
